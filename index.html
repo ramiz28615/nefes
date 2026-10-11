@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="tr" data-mode="sleep">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060910" />
+<title>Nefes · Nefesini Dönüştür</title>
+<meta name="description" content="Bilimsel nefes teknikleri: daha iyi uyku, daha az stres, anında odaklanma. Tarayıcıda çalışan ücretsiz nefes koçu." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS
+   ========================================================= */
+:root{
+  --bg:#060910;
+  --ink:#f2f6ff;
+  --dim:#8e9cb8;
+  --faint:#5a6784;
+  --hair:rgba(255,255,255,.08);
+  --hair2:rgba(255,255,255,.16);
+  --glass:rgba(16,22,36,.62);
+  --glass2:rgba(22,30,48,.5);
+  --accent:#4fd1c5;
+  --accent2:#7c8cff;
+  --accent3:#c084fc;
+  --warn:#ffb86b;
+  --r:20px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.45,0,.15,1);
+}
+html[data-mode="sleep"]{--accent:#7c8cff;--accent2:#a78bfa;--accent3:#5eead4}
+html[data-mode="stress"]{--accent:#5eead4;--accent2:#4fd1c5;--accent3:#38bdf8}
+html[data-mode="focus"]{--accent:#f9c74f;--accent2:#ff9f68;--accent3:#ffd166}
+html[data-mode="reset"]{--accent:#c084fc;--accent2:#e879f9;--accent3:#818cf8}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Manrope',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+
+/* =========================================================
+   ARKA PLAN — aurora + parçacıklar
+   ========================================================= */
+.aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{
+  position:absolute;border-radius:50%;filter:blur(100px);
+  transition:background 1.6s var(--ease-soft);
+  animation:drift 26s ease-in-out infinite alternate;
+}
+.b1{width:min(70vw,720px);aspect-ratio:1;top:-22vh;left:-14vw;background:radial-gradient(circle,var(--accent),transparent 66%);opacity:.42}
+.b2{width:min(60vw,620px);aspect-ratio:1;bottom:-24vh;right:-12vw;background:radial-gradient(circle,var(--accent3),transparent 66%);opacity:.34;animation-delay:-9s}
+.b3{width:min(48vw,480px);aspect-ratio:1;top:34vh;left:52vw;background:radial-gradient(circle,var(--accent2),transparent 68%);opacity:.24;animation-delay:-17s}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(7vw,5vh,0) scale(1.22)}}
+.grain{
+  position:absolute;inset:-50%;opacity:.16;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainMove 8s steps(6) infinite;
+}
+@keyframes grainMove{
+  0%{transform:translate(0,0)}20%{transform:translate(-6%,3%)}40%{transform:translate(4%,-5%)}
+  60%{transform:translate(-3%,6%)}80%{transform:translate(5%,2%)}100%{transform:translate(0,0)}
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;align-items:center;gap:14px;
+  padding:16px clamp(16px,4vw,40px);
+  transition:background .5s,backdrop-filter .5s,padding .5s var(--ease);
+}
+.nav.solid{background:rgba(6,9,16,.72);backdrop-filter:blur(18px);padding-top:11px;padding-bottom:11px;border-bottom:1px solid var(--hair)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.5px;text-decoration:none;color:var(--ink)}
+.logo .mark{
+  width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  transition:background 1.2s var(--ease-soft);
+  box-shadow:0 8px 24px -8px var(--accent);
+}
+.logo .mark svg{width:18px;height:18px}
+.nav .sp{flex:1}
+.nav-link{
+  color:var(--dim);text-decoration:none;font-size:14px;font-weight:600;
+  padding:8px 13px;border-radius:10px;transition:.3s var(--ease);
+}
+.nav-link:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+@media(max-width:720px){.nav-link.hide-s{display:none}}
+
+/* =========================================================
+   HERO + UYGULAMA
+   ========================================================= */
+.hero{
+  position:relative;z-index:2;
+  min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:110px 20px 60px;text-align:center;gap:34px;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 15px 7px 9px;border-radius:99px;
+  border:1px solid var(--hair2);background:var(--glass);backdrop-filter:blur(10px);
+  font-size:12.5px;font-weight:600;color:var(--dim);
+  animation:fadeDown .9s var(--ease) both;
+}
+.eyebrow b{color:var(--ink);font-weight:700}
+.eyebrow .tag{
+  padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:800;letter-spacing:.06em;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060910;text-transform:uppercase;
+}
+h1{
+  font-size:clamp(38px,8.4vw,86px);font-weight:800;line-height:.98;letter-spacing:-.045em;
+  max-width:16ch;animation:fadeUp .95s var(--ease) .08s both;
+}
+h1 em{
+  font-style:normal;
+  background:linear-gradient(115deg,var(--accent),var(--accent2) 45%,var(--accent3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  transition:background 1.2s var(--ease-soft);
+}
+.sub{
+  font-size:clamp(15px,2.3vw,19px);color:var(--dim);max-width:52ch;line-height:1.65;
+  animation:fadeUp .95s var(--ease) .16s both;font-weight:400;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+
+/* ---------- MOD SEÇİCİ ---------- */
+.modes{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .95s var(--ease) .24s both;
+}
+.mode{
+  border:1px solid var(--hair);background:var(--glass2);backdrop-filter:blur(14px);
+  color:var(--dim);font-family:inherit;font-size:13.5px;font-weight:700;
+  padding:11px 17px;border-radius:14px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:.35s var(--ease);
+}
+.mode:hover{color:var(--ink);transform:translateY(-3px);border-color:var(--hair2)}
+.mode.on{
+  color:#060910;border-color:transparent;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 14px 34px -14px var(--accent);
+  transform:translateY(-3px);
+}
+.mode .em{font-size:15px}
+
+/* ---------- ORB ---------- */
+.stage{
+  position:relative;width:min(78vw,380px);aspect-ratio:1;
+  display:grid;place-items:center;
+  animation:fadeUp 1s var(--ease) .3s both;
+}
+.ring{
+  position:absolute;border-radius:50%;border:1px solid var(--hair2);
+  transition:transform 1.4s var(--ease-soft),opacity 1.4s;
+}
+.r1{inset:0}
+.r2{inset:9%;border-color:var(--hair)}
+.r3{inset:19%;border-style:dashed;opacity:.5}
+.orb{
+  position:relative;width:62%;aspect-ratio:1;border-radius:50%;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 62%),
+             radial-gradient(circle at 70% 76%,color-mix(in srgb,var(--accent3) 50%,transparent),transparent 60%),
+             radial-gradient(circle,rgba(255,255,255,.09),rgba(255,255,255,.02) 70%);
+  box-shadow:0 0 90px -12px var(--accent),inset 0 0 60px rgba(255,255,255,.06);
+  transition:transform var(--dur,4s) var(--ease-soft),box-shadow .9s;
+  will-change:transform;
+  cursor:pointer;
+}
+.orb::before{
+  content:"";position:absolute;inset:-14%;border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
+  opacity:.55;transition:transform var(--dur,4s) var(--ease-soft);
+}
+.orb::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.28),transparent 55%);
+  opacity:0;transition:opacity .6s;
+}
+.stage.ticking .orb::after{opacity:.5}
+.orb .pct{
+  font-size:clamp(28px,6vw,42px);font-weight:800;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;position:relative;z-index:2;
+  text-shadow:0 2px 24px rgba(0,0,0,.5);
+}
+.orb .hint-lbl{
+  position:absolute;bottom:16%;font-size:11.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,.72);z-index:2;
+}
+
+/* ---------- FAZ & KONTROLLER ---------- */
+.phase{
+  font-size:clamp(20px,4.4vw,30px);font-weight:700;letter-spacing:-.03em;
+  min-height:1.3em;animation:fadeUp .8s var(--ease) .36s both;
+}
+.phase small{display:block;font-size:13px;font-weight:500;color:var(--faint);letter-spacing:0;margin-top:5px}
+.ctrls{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .9s var(--ease) .42s both;
+}
+.btn{
+  font-family:inherit;cursor:pointer;border:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-weight:700;transition:.35s var(--ease);white-space:nowrap;
+}
+.btn svg{width:18px;height:18px}
+.btn-main{
+  padding:16px 32px;border-radius:99px;font-size:16px;color:#060910;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 18px 44px -16px var(--accent);
+  position:relative;overflow:hidden;min-width:170px;
+}
+.btn-main::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.6),transparent 80%);
+  transform:translateX(-130%);transition:transform .8s var(--ease);
+}
+.btn-main:hover::after{transform:translateX(130%)}
+.btn-main:hover{transform:translateY(-3px)}
+.btn-main:active{transform:translateY(0) scale(.97)}
+.btn-ghost{
+  padding:15px 22px;border-radius:99px;font-size:14.5px;
+  color:var(--ink);background:var(--glass2);border:1px solid var(--hair2);backdrop-filter:blur(14px);
+}
+.btn-ghost:hover{transform:translateY(-3px);background:rgba(255,255,255,.1)}
+.icon-btn{
+  width:48px;height:48px;border-radius:50%;padding:0;
+  color:var(--dim);background:var(--glass2);border:1px solid var(--hair);
+}
+.icon-btn:hover{color:var(--ink);transform:translateY(-3px) rotate(-8deg)}
+
+/* ---------- İSTATİSTİK ŞERİDİ ---------- */
+.strip{
+  display:flex;gap:clamp(22px,5vw,54px);flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .9s var(--ease) .5s both;
+}
+.strip div{text-align:center}
+.strip b{display:block;font-size:clamp(19px,3.4vw,26px);font-weight:800;letter-spacing:-.03em}
+.strip span{font-size:11.5px;color:var(--faint);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+
+/* =========================================================
+   BÖLÜMLER
+   ========================================================= */
+section.blk{position:relative;z-index:2;padding:clamp(60px,10vw,110px) clamp(20px,5vw,40px);max-width:1180px;margin:0 auto}
+.sec-tag{
+  display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:16px;transition:color 1s var(--ease-soft);
+}
+.sec-h{font-size:clamp(28px,5.4vw,46px);font-weight:800;letter-spacing:-.04em;line-height:1.06;max-width:19ch;margin-bottom:18px}
+.sec-p{font-size:clamp(15px,2.1vw,17.5px);color:var(--dim);max-width:60ch;line-height:1.7}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px;margin-top:44px}
+.card{
+  padding:26px;border-radius:var(--r);border:1px solid var(--hair);
+  background:var(--glass);backdrop-filter:blur(18px);
+  transition:.5s var(--ease);position:relative;overflow:hidden;
+}
+.card:hover{transform:translateY(-7px);border-color:var(--hair2);background:var(--glass2)}
+.card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent3),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease);
+}
+.card:hover::before{transform:scaleX(1)}
+.card .ic{
+  width:44px;height:44px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 26%,transparent),transparent);
+  border:1px solid var(--hair2);font-size:20px;
+}
+.card h3{font-size:17.5px;font-weight:700;letter-spacing:-.02em;margin-bottom:9px}
+.card p{font-size:14px;color:var(--dim);line-height:1.68}
+
+/* ---------- FAZ TABLOSU ---------- */
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:44px}
+.ph{
+  padding:22px;border-radius:var(--r);border:1px solid var(--hair);background:var(--glass2);
+  transition:.45s var(--ease);
+}
+.ph:hover{transform:translateY(-5px);border-color:var(--accent)}
+.ph b{display:block;font-size:34px;font-weight:800;letter-spacing:-.05em;color:var(--accent);transition:color 1s}
+.ph span{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.ph p{font-size:13.5px;color:var(--dim);margin-top:11px;line-height:1.6}
+
+/* ---------- SSR ---------- */
+.quote{
+  margin-top:44px;padding:30px;border-radius:var(--r);border:1px solid var(--hair);
+  background:linear-gradient(135deg,var(--glass),transparent);
+  font-size:clamp(16px,2.4vw,20px);line-height:1.65;font-weight:500;letter-spacing:-.01em;
+}
+.quote footer{margin-top:16px;font-size:12.5px;color:var(--faint);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- LOG / GEÇMİŞ ---------- */
+.logbox{margin-top:44px;border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;background:var(--glass)}
+.loghead{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--hair);font-size:13px;font-weight:700;color:var(--dim)}
+.loghead .sp{flex:1}
+.logrow{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--hair);font-size:13.5px;transition:background .3s}
+.logrow:last-child{border-bottom:none}
+.logrow:hover{background:rgba(255,255,255,.04)}
+.logrow .em{font-size:17px}
+.logrow .g{flex:1}
+.logrow b{font-weight:700}
+.logrow span{color:var(--faint);font-size:12px}
+.logrow .dur{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);transition:color 1s}
+
+/* ---------- SSS ---------- */
+.faq{margin-top:40px;display:flex;flex-direction:column;gap:10px}
+details{
+  border:1px solid var(--hair);border-radius:16px;background:var(--glass2);
+  overflow:hidden;transition:.4s var(--ease);
+}
+details[open]{border-color:var(--hair2);background:var(--glass)}
+summary{
+  padding:19px 22px;cursor:pointer;font-size:15.5px;font-weight:700;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:12px;list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:22px;font-weight:400;color:var(--accent);transition:transform .4s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 22px 20px;font-size:14px;color:var(--dim);line-height:1.72}
+
+/* ---------- CTA ---------- */
+.cta{
+  text-align:center;padding:clamp(46px,8vw,80px) clamp(22px,5vw,50px);
+  border-radius:30px;border:1px solid var(--hair2);
+  background:radial-gradient(circle at 50% 0%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 62%),var(--glass);
+  backdrop-filter:blur(18px);margin:0 20px 70px;position:relative;z-index:2;
+}
+.cta h2{font-size:clamp(26px,5vw,42px);font-weight:800;letter-spacing:-.04em;margin-bottom:16px;line-height:1.08}
+.cta p{color:var(--dim);font-size:16px;margin-bottom:30px;max-width:46ch;margin-inline:auto;line-height:1.65}
+
+footer.site{
+  position:relative;z-index:2;text-align:center;padding:34px 20px 44px;
+  font-size:12.5px;color:var(--faint);border-top:1px solid var(--hair);
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+}
+
+/* ---------- İLERLEME ÇUBUĞU ---------- */
+.prog{position:fixed;top:0;left:0;height:2px;z-index:70;background:linear-gradient(90deg,var(--accent),var(--accent3));width:0;transition:width .12s linear}
+
+/* ---------- TOAST ---------- */
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translate(-50%,140%);z-index:90;
+  padding:13px 22px;border-radius:99px;font-size:14px;font-weight:700;
+  background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--hair2);
+  transition:transform .5s var(--ease);box-shadow:0 20px 50px -20px rgba(0,0,0,.9);
+}
+.toast.on{transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+
+<div class="aurora">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grain"></div>
+</div>
+
+<nav class="nav" id="nav">
+  <a class="logo" href="#top">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#060910" stroke-width="2.4" stroke-linecap="round">
+        <path d="M12 3c-3 3.5-3 6.5 0 9s3 5.5 0 9"/><path d="M5 8c1.6 1.4 1.6 3.6 0 5"/><path d="M19 8c-1.6 1.4-1.6 3.6 0 5"/>
+      </svg>
+    </span>
+    Nefes
+  </a>
+  <span class="sp"></span>
+  <a class="nav-link hide-s" href="#nasil">Nasıl çalışır</a>
+  <a class="nav-link hide-s" href="#bilim">Bilim</a>
+  <a class="nav-link" href="#sss">S.S.S.</a>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="eyebrow">
+    <span class="tag">Ücretsiz</span>
+    <span>Tarayıcıda çalışır · kayıt yok · <b>tamamen gizli</b></span>
+  </div>
+
+  <h1>Nefesinle <em>uykunu, odağını ve sakinliğini</em> değiştir.</h1>
+  <p class="sub">Bilimsel olarak desteklenen nefes teknikleriyle stresini 5 dakikada düşür. Sesli rehberlik, görsel halka ve titreşim — sadece nefesini takip et.</p>
+
+  <div class="modes" id="modes">
+    <button class="mode on" data-mode="sleep"><span class="em">🌙</span> Uykuya Dal</button>
+    <button class="mode" data-mode="stress"><span class="em">🌿</span> Stresi Azalt</button>
+    <button class="mode" data-mode="focus"><span class="em">⚡</span> Odaklan</button>
+    <button class="mode" data-mode="reset"><span class="em">🔄</span> Sıfırla</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="ring r1"></div>
+    <div class="ring r2"></div>
+    <div class="ring r3"></div>
+    <div class="orb" id="orb">
+      <span class="pct" id="pct">4</span>
+      <span class="hint-lbl" id="orbLbl">Hazır</span>
+    </div>
+  </div>
+
+  <div class="phase" id="phase">Hazır olduğunda başlat<small id="phaseSub">4 tur · yaklaşık 2 dakika · sesli rehberlik</small></div>
+
+  <div class="ctrls">
+    <button class="btn btn-main" id="startBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Başlat
+    </button>
+    <button class="btn icon-btn" id="soundBtn" title="Sesi aç/kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9a4 4 0 010 6"/></svg>
+    </button>
+    <button class="btn btn-ghost" id="cycleBtn">Tur: 4</button>
+  </div>
+
+  <div class="strip">
+    <div><b id="statSessions">0</b><span>Seans</span></div>
+    <div><b id="statMin">0</b><span>Dakika</span></div>
+    <div><b id="statStreak">0</b><span>Gün seri</span></div>
+    <div><b>4-7-8</b><span>Teknik</span></div>
+  </div>
+</header>
+
+<!-- ================= NASIL ================= -->
+<section class="blk" id="nasil">
+  <span class="sec-tag">Nasıl çalışır</span>
+  <h2 class="sec-h">Tek yapman gereken: halkayı takip et.</h2>
+  <p class="sec-p">Nefesini saymana gerek yok. Halka büyürken nefes al, küçülürken ver. Sistem zamanlamayı, sesi ve ritmi senin yerine yönetir.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="ic">🫁</div>
+      <h3>Görsel rehberlik</h3>
+      <p>Halka senin nefesin olur. Genişlediğinde al, daraldığında ver. Ekrana bakmak bile yeterli — hiçbir şey sayman gerekmiyor.</p>
+    </div>
+    <div class="card">
+      <div class="ic">🔊</div>
+      <h3>Sesli yönlendirme</h3>
+      <p>Yumuşak bir ton her fazı fısıldar. Gözlerini kapatıp sadece sesi takip edebilirsin — uykuya dalarken ideal.</p>
+    </div>
+    <div class="card">
+      <div class="ic">📈</div>
+      <h3>İlerleme takibi</h3>
+      <p>Seans, dakika ve gün serin cihazında saklanır. Küçük düzenli pratik, tek büyük seanstan çok daha etkilidir.</p>
+    </div>
+    <div class="card">
+      <div class="ic">🔒</div>
+      <h3>Gizlilik önce</h3>
+      <p>Kayıt yok, sunucu yok, takip yok. Her şey tarayıcında çalışır; nefes verilerin cihazından hiç çıkmaz.</p>
+    </div>
+  </div>
+
+  <div class="phases">
+    <div class="ph"><b>4</b><span>Saniye</span><p>Burundan sakin bir şekilde nefes al. Karnın şişsin, omuzların kalkmasın.</p></div>
+    <div class="ph"><b>7</b><span>Saniye</span><p>Nefesini tut. Bu bekleme, sinir sistemini gevşeten asıl kısımdır.</p></div>
+    <div class="ph"><b>8</b><span>Saniye</span><p>Ağzından yavaşça ver. Tamamen boşalt; çıkış nefesten uzun olsun.</p></div>
+  </div>
+
+  <div class="quote">
+    “Nefes, otonom sinir sistemine açılan tek bilinçli kapıdır.”
+    <footer>— Nefes egzersizlerinin fizyolojik temeli</footer>
+  </div>
+</section>
+
+<!-- ================= BİLİM ================= -->
+<section class="blk" id="bilim">
+  <span class="sec-tag">Bilim</span>
+  <h2 class="sec-h">Neden sadece nefes almak bu kadar etkili?</h2>
+  <p class="sec-p">Nefes, kalp atışı gibi otomatik çalışır — ama iradesiyle değiştirebildiğin tek otonom fonksiyondur. Yavaş ve derin nefes, vagus siniri üzerinden parasempatik sistemi devreye alır; kalp atışın yavaşlar, kortizol düşer, zihin sakinler.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="ic">😴</div>
+      <h3>Daha hızlı uykuya geçiş</h3>
+      <p>Uzun çıkış nefesleri (8 saniye) kalp atışını yavaşlatır ve uykuya geçişi kolaylaştırır. 4-7-8 tekniği tam olarak bunun için tasarlandı.</p>
+    </div>
+    <div class="card">
+      <div class="ic">🧘</div>
+      <h3>Ölçülebilir stres düşüşü</h3>
+      <p>Düzenli yavaş nefes pratiği, günlük stres algısını ve kaygı seviyesini belirgin şekilde azaltıyor. Etkisi dakikalar içinde başlar.</p>
+    </div>
+    <div class="card">
+      <div class="ic">🎯</div>
+      <h3>Anında odaklanma</h3>
+      <p>Hızlı, ritmik nefesler dikkat ağını uyarır. Toplantıdan veya sınavdan 60 saniye önce yapılan kısa bir seans zihni açar.</p>
+    </div>
+    <div class="card">
+      <div class="ic">💓</div>
+      <h3>Kalp ritmi dengesi</h3>
+      <p>Dakikada ~6 nefeslik ritim, kalp atış değişkenliğinin (HRV) en yüksek olduğu aralıkla örtüşür — denge ve dayanıklılık göstergesi.</p>
+    </div>
+  </div>
+
+  <div class="logbox">
+    <div class="loghead">
+      <span>📋</span><span>Son seansların</span><span class="sp"></span>
+      <span id="logClear" style="cursor:pointer;color:var(--accent)">Temizle</span>
+    </div>
+    <div id="logBody"></div>
+  </div>
+</section>
+
+<!-- ================= SSS ================= -->
+<section class="blk" id="sss">
+  <span class="sec-tag">S.S.S.</span>
+  <h2 class="sec-h">Merak edilenler</h2>
+  <div class="faq">
+    <details open>
+      <summary>Gerçekten ücretsiz mi?</summary>
+      <p>Evet. Kayıt, abonelik veya reklam yok. Uygulama tamamen tarayıcında çalıştığı için sunucu maliyeti de yok — bu yüzden ücretsiz kalabiliyor.</p>
+    </details>
+    <details>
+      <summary>Verilerim bir yere gönderiliyor mu?</summary>
+      <p>Hayır. Seans sayın ve serin yalnızca kendi tarayıcının deposunda tutulur. Hiçbir veri hiçbir sunucuya gönderilmez.</p>
+    </details>
+    <details>
+      <summary>Günde kaç kez yapmalıyım?</summary>
+      <p>Günde 1-2 seans yeterli. Sabah odaklanma, akşam uyku için ideal. Düzenlilik, süreden daha önemli.</p>
+    </details>
+    <details>
+      <summary>Baş dönmesi olursa ne yapmalıyım?</summary>
+      <p>Normal nefesine dön ve dur. Nefes tutma kısmı rahatsız ediyorsa süreyi kısalt veya "Stresi Azalt" modunu kullan — o mod tutma içermez.</p>
+    </details>
+    <details>
+      <summary>Telefonumda titreşim var mı?</summary>
+      <p>Destekleyen cihazlarda her faz geçişinde hafif bir titreşim hissedersin. Tarayıcı ayarlarından izin gerekmez.</p>
+    </details>
+    <details>
+      <summary>Tıbbi bir tedavi mi?</summary>
+      <p>Hayır. Nefes egzersizleri rahatlama aracıdır, tıbbi teşhis veya tedavi yerine geçmez. Solunum veya kalp rahatsızlığın varsa önce doktoruna danış.</p>
+    </details>
+  </div>
+</section>
+
+<div class="cta">
+  <h2>Şimdi 3 nefes al. Farkı hissedeceksin.</h2>
+  <p>Kurulum yok, uygulama indirmek yok. Tarayıcını aç, halkayı takip et, gerisini nefesin yapsın.</p>
+  <button class="btn btn-main" onclick="document.getElementById('top').scrollIntoView();setTimeout(()=>document.getElementById('startBtn').click(),700)">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    Hemen başla
+  </button>
+</div>
+
+<footer class="site">
+  <b style="font-weight:800;letter-spacing:-.03em;font-size:15px;color:var(--ink)">Nefes</b>
+  <span>Bilimsel nefes teknikleri · tarayıcıda çalışır · veri cihazından çıkmaz</span>
+  <span style="opacity:.6">Rahatlama aracıdır, tıbbi tavsiye değildir.</span>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   1) PROTOKOLLER
+   ========================================================= */
+const PROTOCOLS = {
+  sleep:{
+    name:'Uykuya Dal', emoji:'🌙',
+    phases:[{k:'in',label:'Nefes al',dur:4000},{k:'hold',label:'Tut',dur:7000},{k:'out',label:'Ver',dur:8000}],
+    rounds:4, desc:'4-7-8 tekniği · uykuya geçişi kolaylaştırır'
+  },
+  stress:{
+    name:'Stresi Azalt', emoji:'🌿',
+    phases:[{k:'in',label:'Nefes al',dur:5000},{k:'out',label:'Ver',dur:5000}],
+    rounds:6, desc:'Kutu nefesi · sinir sistemini dengeler'
+  },
+  focus:{
+    name:'Odaklan', emoji:'⚡',
+    phases:[{k:'in',label:'Nefes al',dur:2000},{k:'out',label:'Ver',dur:2000}],
+    rounds:15, desc:'Hızlı ritim · dikkat ağını uyarır'
+  },
+  reset:{
+    name:'Sıfırla', emoji:'🔄',
+    phases:[{k:'in',label:'Derin al',dur:4000},{k:'hold',label:'Tut',dur:4000},{k:'out',label:'Uzun ver',dur:6000},{k:'rest',label:'Dinlen',dur:1000}],
+    rounds:5, desc:'4-4-6-1 · zihni temizler'
+  }
+};
+
+/* =========================================================
+   2) DURUM
+   ========================================================= */
+const state = {
+  mode:'sleep', running:false, paused:false,
+  round:1, phaseIdx:0, phaseStart:0, elapsedInPhase:0,
+  sound:true, raf:null, done:0
+};
+let P = PROTOCOLS[state.mode];
+
+const el = id => document.getElementById(id);
+const orb = el('orb'), pct = el('pct'), orbLbl = el('orbLbl'),
+      phaseEl = el('phase'), phaseSub = el('phaseSub'),
+      startBtn = el('startBtn'), stage = el('stage'), toastEl = el('toast');
+
+/* =========================================================
+   3) DEPO
+   ========================================================= */
+const KEY = 'nefes-v1';
+const store = {
+  get(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {sessions:[],totalSec:0,streak:0,lastDay:null}; }catch(e){ return {sessions:[],totalSec:0,streak:0,lastDay:null}; } },
+  set(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+};
+
+/* =========================================================
+   4) SES — Web Audio ile üretilir, dosya gerekmez
+   ========================================================= */
+let AC = null;
+function ac(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+function tone(freq, dur=0.5, vol=0.16, type='sine'){
+  if(!state.sound) return;
+  const c = ac(); if(!c) return;
+  try{
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    o.connect(g); g.connect(c.destination);
+    const t = c.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.start(t); o.stop(t + dur + 0.05);
+  }catch(e){}
+}
+function speak(text){
+  if(!state.sound || !('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='tr-TR'; u.rate=0.82; u.pitch=1; u.volume=0.75;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function buzz(ms){ if(state.sound && navigator.vibrate) try{ navigator.vibrate(ms); }catch(e){} }
+
+/* =========================================================
+   5) MOTOR
+   ========================================================= */
+function phase(){ return P.phases[state.phaseIdx]; }
+
+function start(){
+  ac(); // kullanıcı etkileşiminde aç
+  if(state.running && state.paused){ state.paused=false; state.phaseStart=performance.now()-state.elapsedInPhase; tick(performance.now()); return; }
+  if(state.running){ stop(false); return; }
+  state.running=true; state.paused=false; state.round=1; state.phaseIdx=0;
+  state.phaseStart=performance.now(); state.elapsedInPhase=0; state.done=0;
+  stage.classList.add('ticking');
+  startBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="10" height="14" rx="2"/></svg> Durdur';
+  enterPhase(true);
+  state.raf = requestAnimationFrame(tick);
+}
+function enterPhase(first){
+  const ph = phase(), dur = ph.dur;
+  orb.style.setProperty('--dur', (dur/1000)+'s');
+  applyOrb(ph.k);
+  orbLbl.textContent = ph.label;
+  phaseEl.firstChild.nodeValue = ph.label;
+  phaseSub.textContent = `${P.name} · tur ${state.round}/${P.rounds} · ${(dur/1000).toFixed(0)} saniye`;
+  if(!first){
+    tone(ph.k==='in'?523:(ph.k==='hold'?659:(ph.k==='out'?392:440)), .45, .13);
+    speak(ph.label);
+    buzz(ph.k==='in'?30:18);
+  }
+}
+function applyOrb(kind){
+  orb.style.transition = `transform var(--dur) cubic-bezier(.45,0,.15,1), box-shadow .9s`;
+  if(kind==='in'){
+    orb.style.transform = 'scale(1.22)';
+    orb.style.boxShadow = '0 0 130px -6px var(--accent), inset 0 0 70px rgba(255,255,255,.1)';
+  }else if(kind==='hold'){
+    orb.style.transform = 'scale(1.22)';
+    orb.style.boxShadow = '0 0 150px 0px var(--accent), inset 0 0 80px rgba(255,255,255,.13)';
+  }else if(kind==='out'){
+    orb.style.transform = 'scale(.78)';
+    orb.style.boxShadow = '0 0 70px -18px var(--accent), inset 0 0 40px rgba(255,255,255,.04)';
+  }else{
+    orb.style.transform = 'scale(.92)';
+    orb.style.boxShadow = '0 0 90px -14px var(--accent), inset 0 0 50px rgba(255,255,255,.06)';
+  }
+}
+function tick(now){
+  if(!state.running || state.paused) return;
+  const ph = phase();
+  const e = now - state.phaseStart;
+  const left = Math.max(0, ph.dur - e);
+  const secs = Math.ceil(left/1000);
+  pct.textContent = secs;
+  state.elapsedInPhase = e;
+
+  if(e >= ph.dur){
+    state.phaseIdx++;
+    if(state.phaseIdx >= P.phases.length){
+      state.phaseIdx = 0; state.round++; state.done++;
+      if(state.round > P.rounds){ return finish(); }
+      speak(`Tur ${state.round}`);
+    }
+    state.phaseStart = now;
+    enterPhase(false);
+  }
+  state.raf = requestAnimationFrame(tick);
+}
+function finish(){
+  cancelAnimationFrame(state.raf);
+  state.running=false; state.paused=false;
+  stage.classList.remove('ticking');
+  orb.style.transition='transform 1.2s cubic-bezier(.45,0,.15,1), box-shadow .9s';
+  orb.style.transform='scale(.92)';
+  pct.textContent='✓';
+  orbLbl.textContent='Tamamlandı';
+  phaseEl.firstChild.nodeValue = 'Harika iş 🌟';
+  phaseSub.textContent = `${P.rounds} tur tamamlandı · ${P.name}`;
+  startBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Tekrar';
+  tone(660,.5,.16); setTimeout(()=>tone(880,.7,.14),180); setTimeout(()=>tone(1100,.9,.12),380);
+  speak('Seans tamamlandı. Harika iş.');
+  buzz([40,60,40]);
+  logSession();
+  refreshStats();
+  toast(`${P.name} tamamlandı · ${P.rounds} tur`);
+}
+function stop(silent=true){
+  cancelAnimationFrame(state.raf);
+  state.running=false; state.paused=false;
+  stage.classList.remove('ticking');
+  if('speechSynthesis' in window) try{ speechSynthesis.cancel(); }catch(e){}
+  orb.style.transition='transform .9s cubic-bezier(.45,0,.15,1), box-shadow .9s';
+  orb.style.transform='scale(.92)';
+  pct.textContent = P.phases[0].dur/1000;
+  orbLbl.textContent='Hazır';
+  phaseEl.firstChild.nodeValue = 'Hazır olduğunda başlat';
+  phaseSub.textContent = `${P.rounds} tur · ${P.desc}`;
+  startBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Başlat';
+  if(!silent) toast('Seans durduruldu');
+}
+
+/* =========================================================
+   6) KAYIT / İSTATİSTİK
+   ========================================================= */
+function logSession(){
+  const sec = P.phases.reduce((s,p)=>s+p.dur,0)/1000 * P.rounds;
+  const d = store.get();
+  d.sessions.unshift({ d:new Date().toISOString(), mode:state.mode, name:P.name, rounds:P.rounds, sec:Math.round(sec) });
+  d.sessions = d.sessions.slice(0,20);
+  d.totalSec = (d.totalSec||0) + sec;
+  const today = new Date().toISOString().slice(0,10);
+  const yest = new Date(Date.now()-864e5).toISOString().slice(0,10);
+  if(d.lastDay!==today){ d.streak = (d.lastDay===yest ? (d.streak||0)+1 : 1); d.lastDay=today; }
+  store.set(d);
+}
+function refreshStats(){
+  const d = store.get();
+  el('statSessions').textContent = d.sessions.length;
+  el('statMin').textContent = Math.round((d.totalSec||0)/60);
+  el('statStreak').textContent = d.streak||0;
+  const body = el('logBody');
+  if(!d.sessions.length){ body.innerHTML = '<div class="logrow"><span class="g" style="color:var(--faint)">Henüz seans yok — ilk seansını tamamla.</span></div>'; return; }
+  body.innerHTML = d.sessions.map(s=>{
+    const dt = new Date(s.d);
+    const t = dt.toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="logrow"><span class="em">${PROTOCOLS[s.mode]?PROTOCOLS[s.mode].emoji:'🫁'}</span>
+      <span class="g"><b>${s.name}</b><br><span>${t}</span></span>
+      <span class="dur">${s.rounds} tur · ${Math.round(s.sec/60)} dk</span></div>`;
+  }).join('');
+}
+function toast(msg){
+  toastEl.textContent = msg; toastEl.classList.add('on');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>toastEl.classList.remove('on'), 3200);
+}
+
+/* =========================================================
+   7) ARAYÜZ BAĞLANTILARI
+   ========================================================= */
+document.querySelectorAll('#modes .mode').forEach(b=>{
+  b.onclick = ()=>{
+    if(state.running) stop(true);
+    document.querySelectorAll('#modes .mode').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    state.mode = b.dataset.mode; P = PROTOCOLS[state.mode];
+    document.documentElement.setAttribute('data-mode', state.mode);
+    stop(true);
+  };
+});
+startBtn.onclick = start;
+orb.onclick = ()=>{ if(!state.running) start(); };
+el('soundBtn').onclick = e=>{
+  state.sound = !state.sound;
+  const b = el('soundBtn');
+  b.style.color = state.sound ? 'var(--ink)' : 'var(--faint)';
+  b.querySelector('svg').innerHTML = state.sound
+    ? '<path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9a4 4 0 010 6"/>'
+    : '<path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M17 9l4 6M21 9l-4 6"/>';
+  toast(state.sound ? 'Ses açık' : 'Ses kapalı');
+};
+el('cycleBtn').onclick = ()=>{
+  if(state.running) return toast('Önce seansı durdur');
+  const opts=[3,4,6,8];
+  const i = opts.indexOf(P.rounds);
+  P.rounds = opts[(i+1)%opts.length];
+  el('cycleBtn').textContent = 'Tur: '+P.rounds;
+  phaseSub.textContent = `${P.rounds} tur · ${P.desc}`;
+};
+el('logClear').onclick = ()=>{ store.set({sessions:[],totalSec:0,streak:0,lastDay:null}); refreshStats(); toast('Geçmiş temizlendi'); };
+
+/* klavye: boşluk = başlat/durdur */
+document.addEventListener('keydown', e=>{
+  if(e.code==='Space' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); start(); }
+});
+
+/* görünürlük: sekme değişince duraklat */
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && state.running){ state.paused=true; cancelAnimationFrame(state.raf); }
+  else if(!document.hidden && state.running && state.paused){ state.paused=false; state.phaseStart=performance.now()-state.elapsedInPhase; state.raf=requestAnimationFrame(tick); }
+});
+
+/* nav + ilerleme */
+const nav = el('nav'), prog = el('prog');
+addEventListener('scroll', ()=>{
+  const y = scrollY;
+  nav.classList.toggle('solid', y>40);
+  const h = document.documentElement.scrollHeight - innerHeight;
+  prog.style.width = (h>0 ? (y/h*100) : 0) + '%';
+}, {passive:true});
+
+/* bölüm animasyonları */
+const io = new IntersectionObserver(es=>{
+  es.forEach((e,i)=>{ if(e.isIntersecting){ e.target.style.animation = `fadeUp .8s var(--ease) ${Math.min(i*.06,.3)}s both`; io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll('.card,.ph,.quote,.logbox,details,.cta').forEach(x=>{ x.style.opacity='0'; io.observe(x); });
+
+/* =========================================================
+   8) BAŞLAT
+   ========================================================= */
+P = PROTOCOLS[state.mode];
+phaseSub.textContent = `${P.rounds} tur · ${P.desc}`;
+pct.textContent = P.phases[0].dur/1000;
+refreshStats();
+setTimeout(()=>toast('Halkaya dokun ya da "Başlat"a bas 👆'), 1400);
+</script>
+</body>
+</html>
